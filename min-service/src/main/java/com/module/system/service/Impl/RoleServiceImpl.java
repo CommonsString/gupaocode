@@ -1,6 +1,7 @@
 package com.module.system.service.Impl;
 
 import com.module.system.dto.MenuDTO;
+import com.module.system.dto.mapper.RoleMapper;
 import com.module.system.entity.Role;
 import com.module.system.repository.RoleRepository;
 import com.module.system.service.RoleService;
@@ -20,15 +21,17 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private RoleRepository roleDao;
 
+    @Autowired
+    private RoleMapper roleMapper;
+
+
     /**
-     * userid --> 权限集合
+     * userid-->RoleList
      * @param id
      * @return
      */
     @Override
-    public List<MenuDTO> findByRolesForId(long id) {
-        return null;
+    public Set<Role> findRoleListById(Long id) {
+        return roleDao.findByUsers_Id(id);
     }
-
-
 }

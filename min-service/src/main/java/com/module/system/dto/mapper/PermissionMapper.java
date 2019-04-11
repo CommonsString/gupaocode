@@ -1,8 +1,8 @@
 package com.module.system.dto.mapper;
 
-import me.zhengjie.mapper.EntityMapper;
-import me.zhengjie.modules.system.domain.Permission;
-import me.zhengjie.modules.system.service.dto.PermissionDTO;
+import com.mapper.EntityMapper;
+import com.module.system.dto.PermissionDTO;
+import com.module.system.entity.Permission;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

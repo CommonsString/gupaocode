@@ -1,8 +1,8 @@
 package com.module.system.dto.mapper;
 
-import me.zhengjie.mapper.EntityMapper;
-import me.zhengjie.modules.system.domain.Menu;
-import me.zhengjie.modules.system.service.dto.MenuDTO;
+import com.mapper.EntityMapper;
+import com.module.system.dto.MenuDTO;
+import com.module.system.entity.Menu;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

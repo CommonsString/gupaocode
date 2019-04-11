@@ -15,5 +15,11 @@ public interface RoleRepository extends JpaRepository<Role, Long>, JpaSpecificat
      */
     Role findByName(String name);
 
+    /**
+     * userid-->roleList
+     * findByUsers_Id
+     * @param id
+     * @return
+     */
     Set<Role> findByUsers_Id(Long id);
 }

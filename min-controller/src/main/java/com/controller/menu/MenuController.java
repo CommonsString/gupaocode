@@ -41,9 +41,12 @@ public class MenuController {
         UserDetails userDetails = SecurityContextHandler.get();
         User user = userService.findUserByName(userDetails.getUsername());
         // 根据权限, 获取菜单列表
-        Set<Role> roles = null;
-        List<MenuDTO> menuList = roleService.findByRolesForId(1L);
-        // 获取
+        Set<Role> roles = roleService.findRoleListById(user.getId());
+        List<MenuDTO> menuList = menuService.findByRolesForId(roles);
+        // 获取菜单树
+        List<MenuDTO> menuTree = (List<MenuDTO>) menuService.buildTree(menuList).get("content");
+        menuService.buildMenu(menuTree);
+        // 构建菜单
         return null;
     }
 
