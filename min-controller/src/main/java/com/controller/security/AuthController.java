@@ -6,12 +6,9 @@ import com.module.security.units.AuthorizationUser;
 import com.module.security.units.JwtUser;
 import com.module.security.utils.JwtTokenUtil;
 import com.utils.EncryptUtils;
-import com.utils.ScurityContextHandler;
+import com.utils.SecurityContextHandler;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import jdk.nashorn.internal.runtime.logging.Logger;
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +35,7 @@ public class AuthController {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
+    // 显示注入
     @Qualifier("jwtUserDetailsService")
     private UserDetailsService userDetailsService;
 
@@ -65,7 +63,7 @@ System.out.println("token : " + token);
     @ApiOperation("获取用户信息")
     public ResponseEntity geUserInformation() {
         // 获取当前用户信息
-        UserDetails current = ScurityContextHandler.get();
+        UserDetails current = SecurityContextHandler.get();
         JwtUser jwtUser = (JwtUser) userDetailsService.loadUserByUsername(current.getUsername());
         if(jwtUser == null) {
             throw new AccountExpiredException("无效用户信息！");

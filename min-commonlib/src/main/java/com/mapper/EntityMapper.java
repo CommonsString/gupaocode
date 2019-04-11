@@ -4,6 +4,8 @@ import java.util.List;
 
 
 /**
+ * mapStruct：DTO:Entity转换器
+ * DTO：Data transfer Object
  * @param <D>
  * @param <E>
  */

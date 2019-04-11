@@ -69,6 +69,7 @@ public class JwtUserDetailsService implements UserDetailsService {
                 user.getPassword(),
                 user.getAvatar(),
                 user.getEmail(),
+                // 获取权限
                 mapToGrantedAuthorities(roleDao.findByUsers_Id(user.getId()), permissDao),
                 user.getEnabled(),
                 user.getCreateTime(),
@@ -79,7 +80,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
 
     /**
-     *
+     * 权限封装
      * @param roles
      * @param permissionRepository
      * @return
