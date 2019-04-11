@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 /**
  * 获取当前JwtUser
  */
-public class ScurityContextHandler {
+public class SecurityContextHandler {
 
     public static UserDetails get() {
         UserDetails details = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
