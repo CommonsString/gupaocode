@@ -19,6 +19,7 @@ import com.module.system.entity.vo.*;
 public class MenuServiceImpl implements MenuService {
 
 
+    @Autowired
     private MenuRepository menuRepository;
 
     @Autowired
@@ -37,6 +38,7 @@ public class MenuServiceImpl implements MenuService {
         Set<Menu> menus = new LinkedHashSet<Menu>();
         for (Role el : roles) {
             // 转换: https://blog.csdn.net/lidai352710967/article/details/81461119
+
             LinkedHashSet<Menu> tempList = menuRepository.findByRoles_IdOrderBySortAsc(el.getId());
             List<Menu> menuSingle = tempList.stream().collect(Collectors.toList());
             // 加入菜单
@@ -56,13 +58,13 @@ public class MenuServiceImpl implements MenuService {
         List<MenuDTO> tree = new ArrayList<MenuDTO>();
         for (MenuDTO el : menuList) {
             // pid == 0, 顶级菜单
-            String pid = el.getPid().toString();
-            if ("0".equals(pid)) {
+            if (el.getPid() == 0L) {
                 tree.add(el);
             }
             // 子菜单遍历
             for (MenuDTO sub : menuList) {
-                if (sub.getPid() == el.getPid()) {
+//                if (sub.getId() == el.getId()) continue;
+                if (sub.getPid() == el.getId()) {
                     if (el.getChildren() == null) {
                         el.setChildren(new ArrayList<MenuDTO>());
                     }
@@ -82,7 +84,7 @@ public class MenuServiceImpl implements MenuService {
      * @return
      */
     @Override
-    public Object buildMenu(List<MenuDTO> menuTree) {
+    public List<MenuVo> buildMenu(List<MenuDTO> menuTree) {
         List<MenuVo> result = new LinkedList<MenuVo>();
         menuTree.forEach(el -> {
             if (el != null) {
@@ -109,12 +111,36 @@ public class MenuServiceImpl implements MenuService {
                         menuVo.setComponent(el.getComponent());
                     }
                 }
-                //
-                MenuMetaVo meta = new MenuMetaVo(menuVo.getName(), el.getIcon());
+                MenuMetaVo meta = new MenuMetaVo(el.getName(), el.getIcon());
                 menuVo.setMeta(meta);
-
+                if (childMenu != null && childMenu.size() != 0) {
+                    menuVo.setAlwaysShow(true);
+                    menuVo.setRedirect("noredirect");
+                    // 递归处理
+                    menuVo.setChildren(buildMenu(childMenu));
+                } else if (el.getPid() == 0L) { // 一级菜单，没有子菜单
+                    MenuVo menuVo_c = new MenuVo();
+                    menuVo_c.setMeta(menuVo.getMeta());
+                    // 非外链
+                    if (!el.getIFrame()) {
+                        menuVo_c.setPath("index");
+                        menuVo_c.setName(menuVo.getName());
+                        menuVo_c.setComponent(menuVo.getComponent());
+                    } else {
+                        // 外链
+                        menuVo_c.setPath(el.getPath());
+                    }
+                    menuVo.setName(null);
+                    menuVo.setMeta(null);
+                    menuVo.setComponent("Layout");
+                    List<MenuVo> list = new ArrayList<MenuVo>();
+                    list.add(menuVo_c);
+                    // 设置子菜单
+                    menuVo.setChildren(list);
+                }
+                result.add(menuVo);
             }
         });
-        return null;
+        return result;
     }
 }
