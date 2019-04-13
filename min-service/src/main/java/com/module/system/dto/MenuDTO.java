@@ -1,11 +1,16 @@
 package com.module.system.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-@Data
+@ToString
+@Getter
+@Setter
 public class MenuDTO {
 
     private Long id;
