@@ -44,6 +44,7 @@ public class AuthController {
     public ResponseEntity login(@Validated @RequestBody AuthorizationUser authUser) {
         // JwtUser对象
         final JwtUser jUser = (JwtUser) userDetailsService.loadUserByUsername(authUser.getUsername());
+System.out.println("psd : " + EncryptUtils.encryptPassword(authUser.getPassword()));
         // 校验密码
         if (!jUser.getPassword().equals(EncryptUtils.encryptPassword(authUser.getPassword()))) {
             throw new AccountExpiredException("密码错误！");
@@ -53,7 +54,7 @@ public class AuthController {
         // 创建token令牌
         final String token = jwtTokenUtil.generateToken(jUser);
 // token test
-System.out.println("token : " + token);
+        System.out.println("token : " + token);
         return ResponseEntity.ok(new AuthorizationInfo(token, jUser));
     }
 

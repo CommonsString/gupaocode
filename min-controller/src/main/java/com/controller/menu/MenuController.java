@@ -10,6 +10,7 @@ import com.utils.SecurityContextHandler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,9 +46,8 @@ public class MenuController {
         List<MenuDTO> menuList = menuService.findByRolesForId(roles);
         // 获取菜单树
         List<MenuDTO> menuTree = (List<MenuDTO>) menuService.buildTree(menuList).get("content");
-        menuService.buildMenu(menuTree);
         // 构建菜单
-        return null;
+        return new ResponseEntity(menuService.buildMenu(menuTree), HttpStatus.OK);
     }
 
 

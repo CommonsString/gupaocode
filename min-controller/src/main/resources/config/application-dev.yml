@@ -19,8 +19,8 @@ spring:
       # 配置连接在池中的最小生存时间
       min-evictable-idle-time-millis: 300000
       # 测试用例
-     # validation-query: select '1' from dual
-      test-while-idle: true
+#      validation-query: select '1' from dual
+#      test-while-idle: true
       test-on-borrow: false
       test-on-return: false
       # 打开PSCache，并且指定每个连接上PSCache的大小
