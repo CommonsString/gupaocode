@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,7 +36,7 @@ public class MenuController {
     @Autowired
     private RoleService roleService;
 
-    @PostMapping(value = "/build")
+    @GetMapping(value = "/build")
     @ApiOperation("构建菜单, 返回前端菜单视图")
     public ResponseEntity buildViewMenu() {
         // 获取当前用户
