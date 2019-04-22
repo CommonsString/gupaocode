@@ -1,7 +1,8 @@
 package com.module.system.service;
 
+import com.module.system.domain.Role;
 import com.module.system.dto.MenuDTO;
-import com.module.system.entity.Role;
+//import com.module.system.entity.Role;
 
 import java.util.HashMap;
 import java.util.List;
