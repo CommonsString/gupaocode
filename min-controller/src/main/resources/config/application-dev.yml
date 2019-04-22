@@ -20,10 +20,10 @@ spring:
       min-evictable-idle-time-millis: 300000
       # 测试用例
 #      validation-query: select '1' from dual
-#      test-while-idle: true
+      test-while-idle: false
       test-on-borrow: false
       test-on-return: false
-      # 打开PSCache，并且指定每个连接上PSCache的大小
+      #打开PSCache，并且指定每个连接上PSCache的大小
       pool-prepared-statements: true
       max-open-prepared-statements: 20
       max-pool-prepared-statement-per-connection-size: 20
@@ -40,14 +40,6 @@ spring:
         url-pattern: /*
         exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
 
-  #配置 Jpa
-  jpa:
-    hibernate:
-      # 生产环境设置成 none，避免程序运行时自动更新数据库结构
-      ddl-auto: update
-      # 打印Sql语句
-#    show: true
-
 #jwt
 jwt:
   header: Authorization
@@ -55,12 +47,10 @@ jwt:
   secret: mySecret
   # token 过期时间 2个小时
   expiration: 7200000
+  # token 过期时间 1.2m
+#  expiration: 72000
   auth:
     # 授权路径
     path: /login
     # 获取用户信息
     account: /info
-
-#是否允许生成代码，生产环境设置为false
-generator:
-  enabled: true
