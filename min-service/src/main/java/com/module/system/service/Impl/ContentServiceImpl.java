@@ -1,10 +1,7 @@
 package com.module.system.service.Impl;
 
-import com.module.system.dto.ContentDTO;
-import com.module.system.dto.mapper.ContentMapper;
-import com.module.system.entity.Content;
+import com.module.system.domain.Content;
 import com.module.system.entity.vo.ContentVo;
-import com.module.system.repository.ContentRepository;
 import com.module.system.service.ContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,23 +11,36 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
 public class ContentServiceImpl implements ContentService {
 
-    @Autowired
+
+
+
+
+    @Override
+    public void saveContent(Content msg) {
+
+    }
+
+    @Override
+    public List<ContentVo> findMsgLimit() {
+        return null;
+    }
+
+/*    @Autowired
     private ContentRepository contentRepository;
 
     @Autowired
     private ContentMapper contentMapper;
 
-    /**
+    *//**
      * 保存新闻
       * @param msg
-     */
+     *//*
     @Override
     public void saveContent(Content msg) {
         // 创建时间
@@ -38,10 +48,10 @@ public class ContentServiceImpl implements ContentService {
         contentRepository.save(msg);
     }
 
-    /**
+    *//**
      * 获取最新10条信息
      * @return
-     */
+     *//*
     @Override
     public List<ContentVo> findMsgLimit() {
         // 查询
@@ -59,7 +69,7 @@ public class ContentServiceImpl implements ContentService {
             result.add(model);
         });
         return result;
-    }
+    }*/
 
 
 }

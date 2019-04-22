@@ -1,8 +1,8 @@
 package com.controller.menu;
 
+import com.module.system.domain.Role;
+import com.module.system.domain.User;
 import com.module.system.dto.MenuDTO;
-import com.module.system.entity.Role;
-import com.module.system.entity.User;
 import com.module.system.service.MenuService;
 import com.module.system.service.RoleService;
 import com.module.system.service.UserService;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

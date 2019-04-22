@@ -19,14 +19,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 /**
  * 配置类:
  */
-// 声明为配置类
 @Configuration
-// 启用spring security
+@EnableTransactionManagement(proxyTargetClass = true)
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -100,10 +100,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers( HttpMethod.POST,"/auth/"+loginPath).permitAll()
                 .antMatchers("/websocket/**").permitAll()
                 .antMatchers("/druid/**").anonymous()
-
-                // 支付宝回调
-                .antMatchers("/api/aliPay/return").anonymous()
-                .antMatchers("/api/aliPay/notify").anonymous()
+                // 新闻测试
+                .antMatchers("/test/getname").anonymous()
 
                 // swagger start
                 .antMatchers("/swagger-ui.html").anonymous()

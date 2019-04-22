@@ -1,11 +1,14 @@
 package com.module.system.service.Impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.module.system.domain.Menu;
+import com.module.system.domain.Role;
 import com.module.system.dto.MenuDTO;
-import com.module.system.dto.mapper.MenuMapper;
-import com.module.system.entity.Menu;
-import com.module.system.entity.Role;
-import com.module.system.repository.MenuRepository;
+//import com.module.system.dto.mapper.MenuMapper;
+//import com.module.system.entity.Menu;
+//import com.module.system.entity.Role;
+import com.module.system.dto.translation.MenuTranslation;
+import com.module.system.mapper.MenuMapper;
 import com.module.system.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,11 +22,15 @@ import com.module.system.entity.vo.*;
 public class MenuServiceImpl implements MenuService {
 
 
-    @Autowired
-    private MenuRepository menuRepository;
+//    @Autowired
+//    private MenuRepository menuRepository;
 
     @Autowired
     private MenuMapper menuMapper;
+
+    // 转换器
+    @Autowired
+    private MenuTranslation menuTranslation;
 
 
     /**
@@ -38,14 +45,14 @@ public class MenuServiceImpl implements MenuService {
         Set<Menu> menus = new LinkedHashSet<Menu>();
         for (Role el : roles) {
             // 转换: https://blog.csdn.net/lidai352710967/article/details/81461119
-
-            LinkedHashSet<Menu> tempList = menuRepository.findByRoles_IdOrderBySortAsc(el.getId());
+//            LinkedHashSet<Menu> tempList = menuRepository.findByRoles_IdOrderBySortAsc(el.getId());
+            LinkedHashSet<Menu> tempList = menuMapper.findByRoleIdRetuenMenuList(el.getId());
             List<Menu> menuSingle = tempList.stream().collect(Collectors.toList());
             // 加入菜单
             menus.addAll(menuSingle);
         }
         // 转发成DTO
-        List<MenuDTO> menuDto = menus.stream().map(menuMapper::toDto).collect(Collectors.toList());
+        List<MenuDTO> menuDto = menus.stream().map(menuTranslation::toDto).collect(Collectors.toList());
         return menuDto;
     }
 

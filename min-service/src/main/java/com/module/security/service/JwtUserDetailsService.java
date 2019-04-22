@@ -2,12 +2,12 @@ package com.module.security.service;
 
 import com.module.security.units.JwtUser;
 import com.module.security.utils.ValidUtils;
-import com.module.system.entity.Permission;
-import com.module.system.entity.Role;
-import com.module.system.entity.User;
-import com.module.system.repository.PermissionRepository;
-import com.module.system.repository.RoleRepository;
-import com.module.system.repository.UserRepository;
+import com.module.system.domain.Permission;
+import com.module.system.domain.Role;
+import com.module.system.domain.User;
+import com.module.system.mapper.PermissionMapper;
+import com.module.system.mapper.RoleMapper;
+import com.module.system.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,14 +28,13 @@ import java.util.stream.Collectors;
 public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userDao;
+    private UserMapper userMapper;
 
     @Autowired
-    private RoleRepository roleDao;
+    private RoleMapper roleMapper;
 
     @Autowired
-    private PermissionRepository permissDao;
-
+    private PermissionMapper permissionMapper;
 
 
     @Override
@@ -47,15 +46,16 @@ public class JwtUserDetailsService implements UserDetailsService {
         // 邮箱验证
         User user = null;
         if(ValidUtils.isEmail(username)) {
-            user = userDao.findByEmail(username);
+            user = userMapper.findByEmail(username);
         } else {
-            user = userDao.findByUsername(username);
+            user = userMapper.findByUsername(username);
         }
 
         // 判空操作
         if(user == null) {
             throw new RuntimeException("user is null");
         } else {
+            // 创建jwt
             return createDetails(user);
         }
     }
@@ -63,6 +63,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
 
     public UserDetails createDetails(User user) {
+        boolean enabled = user.getEnabled() == 1 ? true : false;
         JwtUser jwtUser = new JwtUser(
                 user.getId(),
                 user.getUsername(),
@@ -70,8 +71,8 @@ public class JwtUserDetailsService implements UserDetailsService {
                 user.getAvatar(),
                 user.getEmail(),
                 // 获取权限
-                mapToGrantedAuthorities(roleDao.findByUsers_Id(user.getId()), permissDao),
-                user.getEnabled(),
+                mapToGrantedAuthorities(roleMapper.findByUserMenuAndRole(user.getId()), permissionMapper),
+                enabled,
                 user.getCreateTime(),
                 user.getLastPasswordResetTime()
         );
@@ -85,14 +86,15 @@ public class JwtUserDetailsService implements UserDetailsService {
      * @param permissionRepository
      * @return
      */
-    private static List<GrantedAuthority> mapToGrantedAuthorities(Set<Role> roles, PermissionRepository permissionRepository) {
+    private static List<GrantedAuthority> mapToGrantedAuthorities(Set<Role> roles, PermissionMapper dao) {
 
         // 权限操作
         Set<Permission> permissions = new HashSet<>();
         for (Role role : roles) {
             Set<Role> roleSet = new HashSet<>();
             roleSet.add(role);
-            permissions.addAll(permissionRepository.findByRoles_Id(role.getId()));
+            Set set = dao.selectByIdReturnList(role.getId());
+            permissions.addAll(set);
         }
 
         return permissions.stream()

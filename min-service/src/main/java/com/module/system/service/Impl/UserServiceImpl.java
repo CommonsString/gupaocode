@@ -1,9 +1,8 @@
 package com.module.system.service.Impl;
 
 import com.module.security.utils.ValidUtils;
-import com.module.system.dto.mapper.UserMapper;
-import com.module.system.entity.User;
-import com.module.system.repository.UserRepository;
+import com.module.system.domain.User;
+import com.module.system.mapper.UserMapper;
 import com.module.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,11 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserRepository userDao;
-
-    @Autowired
     private UserMapper userMapper;
-
 
     /**
      * 根据姓名查找用户
@@ -34,9 +29,9 @@ public class UserServiceImpl implements UserService {
         User user = null;
         // 邮箱
         if(ValidUtils.isEmail(username)) {
-            user = userDao.findByEmail(username);
+            user = userMapper.findByEmail(username);
         } else {
-            user = userDao.findByUsername(username);
+            user = userMapper.findByUsername(username);
         }
         // 用户null
         if(user == null) {
