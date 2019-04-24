@@ -102,7 +102,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/druid/**").anonymous()
                 // 新闻测试
                 .antMatchers("/test/getname").anonymous()
-
+                .antMatchers("/content/upMsgFile").anonymous()
                 // swagger start
                 .antMatchers("/swagger-ui.html").anonymous()
                 .antMatchers("/swagger-resources/**").anonymous()

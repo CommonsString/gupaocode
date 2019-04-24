@@ -2,6 +2,8 @@ package com.module.system.mapper;
 
 import com.module.system.domain.Content;
 
+import java.util.List;
+
 public interface ContentMapper {
     /**
      *
@@ -44,4 +46,6 @@ public interface ContentMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(Content record);
+
+    List<Content> findByIsRightDesc();
 }
