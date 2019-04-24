@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -34,12 +35,12 @@ public class ContentController {
             @ApiImplicitParam(name = "role", value = "阅读权限", required = true, dataType = "String"),
             @ApiImplicitParam(name = "content", value = "新闻内容", required = true, dataType = "String")
     })
-//    @PreAuthorize("")
     public ResponseEntity saveMsg(String title, String role, String content) {
         Content msg = new Content();
         msg.setTitle(title);
         msg.setPermission(role);
         msg.setContext(content);
+        System.out.println(title + " " + role + " " + content);
         //  存储
         contentService.saveContent(msg);
         return new ResponseEntity(HttpStatus.OK);
@@ -48,8 +49,17 @@ public class ContentController {
     @GetMapping(value = "/getMsgTen")
     @ApiOperation("获取最新10条代审阅文章")
     public ResponseEntity gitMsgLimitTen() {
-        List<ContentVo> result = this.contentService.findMsgLimit();
+        List<ContentVo> result = contentService.findMsgLimit();
         return new ResponseEntity(result, HttpStatus.OK);
     }
+
+    @GetMapping(value = "/upMsgFile")
+    @ApiOperation("获取最新10条代审阅文章")
+    public ResponseEntity upMsgFile(MultipartFile file) {
+
+        System.out.println(file);
+        return new ResponseEntity("哈哈哈", HttpStatus.OK);
+    }
+
 
 }
