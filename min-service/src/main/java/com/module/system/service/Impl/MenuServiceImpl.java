@@ -4,9 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import com.module.system.domain.Menu;
 import com.module.system.domain.Role;
 import com.module.system.dto.MenuDTO;
-//import com.module.system.dto.mapper.MenuMapper;
-//import com.module.system.entity.Menu;
-//import com.module.system.entity.Role;
 import com.module.system.dto.translation.MenuTranslation;
 import com.module.system.mapper.MenuMapper;
 import com.module.system.service.MenuService;
@@ -17,8 +14,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.module.system.entity.vo.*;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
 public class MenuServiceImpl implements MenuService {
 
 

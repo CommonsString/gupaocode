@@ -23,10 +23,24 @@ public class ContentServiceImpl implements ContentService {
     private ContentMapper contentMapper;
 
     @Override
-    public void saveContent(Content msg) {
-        // 创建时间
-        msg.setCreateTime(new Date());
-        contentMapper.insertSelective(msg);
+    public void updateContent(ContentVo msg) {
+        Content content = new Content();
+        // id
+        content.setId(msg.getOdd());
+        // context
+        content.setContext(msg.getContent());
+        // permission
+        content.setPermission(msg.getTag());
+        // title
+        content.setTitle(msg.getName());
+        // isRight
+        String isRight = msg.getStatus();
+        if ("未审阅".trim().equals(isRight)) {
+            content.setIsRight("0");
+        } else if("已审阅".trim().equals(isRight)) {
+            content.setIsRight("1");
+        }
+        contentMapper.updateByPrimaryKeySelective(content);
     }
 
     @Override
@@ -39,19 +53,47 @@ public class ContentServiceImpl implements ContentService {
             model.setOdd(el.getId());
             model.setName(el.getTitle());
             // 转换
-            String permission = el.getPermission();
-            if("0".equals(permission)) {
-                model.setTag("未审阅");
+            String isRight = el.getIsRight();
+            if ("0".equals(isRight)) {
+                model.setStatus("未审阅");
             } else {
-                model.setTag("已审阅");
+                model.setStatus("已审阅");
             }
             model.setTag(el.getPermission());
-            model.setStatus(el.getIsRight());
             model.setContent(el.getContext());
             // 加入结果集
             result.add(model);
         });
         return result;
+    }
+
+
+    /**
+     * 主页更新状态
+     *
+     * @param id
+     */
+    @Override
+    public void updateMainIndexMsg(Long id) {
+
+        Content content = new Content();
+        content.setId(id);
+        content.setIsRight("1");
+        contentMapper.updateByPrimaryKeySelective(content);
+    }
+
+    /**
+     * 保存新闻
+     * @param content
+     */
+    @Override
+    public void saveContent(ContentVo content) {
+        Content contentDomain = new Content();
+        contentDomain.setTitle(content.getName());
+        contentDomain.setContext(content.getContent());
+        contentDomain.setPermission(content.getTag());
+        contentDomain.setCreateTime(new Date());
+        contentMapper.insertSelective(contentDomain);
     }
 
 
