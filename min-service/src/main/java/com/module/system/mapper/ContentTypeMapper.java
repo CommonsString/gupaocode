@@ -2,6 +2,8 @@ package com.module.system.mapper;
 
 import com.module.system.domain.ContentType;
 
+import java.util.List;
+
 public interface ContentTypeMapper {
     /**
      *
@@ -38,4 +40,6 @@ public interface ContentTypeMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(ContentType record);
+
+    List<ContentType> selectAll();
 }
