@@ -1,19 +1,14 @@
 package com.controller.msg;
 
-import com.module.system.domain.Content;
 import com.module.system.entity.vo.ContentVo;
 import com.module.system.service.ContentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -29,20 +24,11 @@ public class ContentController {
 
 
     @PostMapping (value = "/saveMsg")
-    @ApiOperation("保存新闻")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "title", value = "新闻标题", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "role", value = "阅读权限", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "content", value = "新闻内容", required = true, dataType = "String")
-    })
-    public ResponseEntity saveMsg(String title, String role, String content) {
-        Content msg = new Content();
-        msg.setTitle(title);
-        msg.setPermission(role);
-        msg.setContext(content);
-        System.out.println(title + " " + role + " " + content);
-        //  存储
-        contentService.saveContent(msg);
+    @ApiOperation("编辑新闻")
+    @ApiImplicitParam(name = "content", value = "新闻内容", required = true, dataType = "Content")
+    public ResponseEntity saveMsg(@RequestBody ContentVo content) {
+System.out.println(content.toString());
+        contentService.updateContent(content);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -54,11 +40,30 @@ public class ContentController {
     }
 
     @GetMapping(value = "/upMsgFile")
-    @ApiOperation("获取最新10条代审阅文章")
+    @ApiOperation("上传文章")
     public ResponseEntity upMsgFile(MultipartFile file) {
-
         System.out.println(file);
         return new ResponseEntity("哈哈哈", HttpStatus.OK);
+    }
+
+
+    @PutMapping(value = "/updateMainIndex/{id}")
+    @ApiOperation("首页：记录通过")
+    @ApiImplicitParam(name = "id", value = "新闻id", required = true, dataType = "String")
+    public ResponseEntity updateMainIndex(@PathVariable Long id) {
+        contentService.updateMainIndexMsg(id);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+
+
+    @PostMapping (value = "/saveMsgCotent")
+    @ApiOperation("保存新闻")
+    @ApiImplicitParam(name = "content", value = "新闻内容", required = true, dataType = "Content")
+    public ResponseEntity saveMsgCotent(@RequestBody ContentVo content) {
+System.out.println(content.toString());
+        contentService.saveContent(content);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 
