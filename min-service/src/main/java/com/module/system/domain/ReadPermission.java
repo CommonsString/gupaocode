@@ -1,6 +1,6 @@
 package com.module.system.domain;
 
-public class ContentType {
+public class ReadPermission {
     /**
      * 
      */

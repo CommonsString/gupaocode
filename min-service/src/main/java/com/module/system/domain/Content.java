@@ -45,4 +45,6 @@ public class Content {
      */
     private String context;
 
+    private Long type;
+
 }
