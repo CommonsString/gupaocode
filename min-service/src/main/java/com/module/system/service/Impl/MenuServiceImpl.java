@@ -22,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuServiceImpl implements MenuService {
 
 
-//    @Autowired
-//    private MenuRepository menuRepository;
 
     @Autowired
     private MenuMapper menuMapper;

@@ -1,23 +1,33 @@
 package com.module.system.service.Impl;
 
+import com.exception.EntityExistException;
 import com.module.system.domain.Role;
-//import com.module.system.entity.Role;
+import com.module.system.dto.RoleDTO;
+import com.module.system.dto.translation.RoleTranslation;
 import com.module.system.mapper.RoleMapper;
+import com.module.system.repository.RoleRepository;
 import com.module.system.service.RoleService;
+import com.utils.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import java.util.*;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class RoleServiceImpl implements RoleService {
 
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private RoleMapper roleMapper;
+
+    @Autowired
+    private RoleTranslation roleTranslation;
+
 
 
     /**
@@ -27,8 +37,82 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public Set<Role> findRoleListById(Long id) {
-//        return roleDao.findByUsers_Id(id);
         return roleMapper.findByIdReturnList(id);
     }
 
+    @Override
+    public RoleDTO findById(long id) {
+        Optional<Role> role = roleRepository.findById(id);
+        ValidationUtil.isNull(role,"Role","id",id);
+        return roleTranslation.toDto(role.get());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public RoleDTO create(Role resources) {
+        if(roleRepository.findByName(resources.getName()) != null){
+            throw new EntityExistException(Role.class,"username",resources.getName());
+        }
+        return roleTranslation.toDto(roleRepository.save(resources));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void update(Role resources) {
+
+        Optional<Role> optionalRole = roleRepository.findById(resources.getId());
+        ValidationUtil.isNull(optionalRole,"Role","id",resources.getId());
+
+        Role role = optionalRole.get();
+
+        Role role1 = roleRepository.findByName(resources.getName());
+
+        if(role1 != null && !role1.getId().equals(role.getId())){
+            throw new EntityExistException(Role.class,"username",resources.getName());
+        }
+
+        role.setName(resources.getName());
+        role.setRemark(resources.getRemark());
+        roleRepository.save(role);
+    }
+
+    @Override
+    public void updatePermission(Role resources, RoleDTO roleDTO) {
+        Role role = roleTranslation.toEntity(roleDTO);
+        role.setPermissions(resources.getPermissions());
+        roleRepository.save(role);
+    }
+
+    @Override
+    public void updateMenu(Role resources, RoleDTO roleDTO) {
+        Role role = roleTranslation.toEntity(roleDTO);
+        role.setMenus(resources.getMenus());
+        roleRepository.save(role);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(Long id) {
+        roleRepository.deleteById(id);
+    }
+
+    @Override
+    public Object getRoleTree() {
+
+        List<Role> roleList = roleRepository.findAll();
+
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Role role : roleList) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id",role.getId());
+            map.put("label",role.getName());
+            list.add(map);
+        }
+        return list;
+    }
+
+    @Override
+    public Set<Role> findByUsers_Id(Long id) {
+        return roleRepository.findByUsers_Id(id);
+    }
 }
