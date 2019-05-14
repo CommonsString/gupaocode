@@ -17,4 +17,9 @@ public class EncryptUtils {
         return  DigestUtils.md5DigestAsHex(password.getBytes());
     }
 
+    public static void main(String[] args) {
+        System.out.println(encryptPassword("wanmcdmmaa123"));
+
+    }
+
 }

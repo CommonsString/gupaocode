@@ -10,5 +10,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>min-commonlib</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 </project>
