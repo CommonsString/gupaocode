@@ -2,6 +2,7 @@ package com.module.system.mapper;
 
 import com.module.system.domain.Role;
 
+import java.util.List;
 import java.util.Set;
 
 public interface RoleMapper {
@@ -44,4 +45,8 @@ public interface RoleMapper {
     Set<Role> findByUserMenuAndRole(Long id);
 
     Set<Role> findByIdReturnList(Long id);
+
+    List<Role> findRoleAll();
+
+    Role selectByName(String name);
 }

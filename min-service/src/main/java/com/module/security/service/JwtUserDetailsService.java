@@ -63,7 +63,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
 
     public UserDetails createDetails(User user) {
-        boolean enabled = user.getEnabled() == 1 ? true : false;
+        boolean enabled = user.getEnabled();
         JwtUser jwtUser = new JwtUser(
                 user.getId(),
                 user.getUsername(),

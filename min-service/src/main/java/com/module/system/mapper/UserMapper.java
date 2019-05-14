@@ -1,6 +1,9 @@
 package com.module.system.mapper;
 
 import com.module.system.domain.User;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Date;
 
 public interface UserMapper {
     /**
@@ -42,4 +45,8 @@ public interface UserMapper {
     User findByEmail(String username);
 
     User findByUsername(String username);
+
+
+    void updatePassword(@Param("id") Long id, @Param("password") String md5Password,
+                        @Param("date") Date date);
 }

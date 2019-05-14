@@ -1,57 +1,60 @@
 package com.module.system.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.util.Date;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.Set;
 
+@Entity
 @Getter
 @Setter
-public class Menu {
-    /**
-     * ID
-     */
+@Table(name = "menu")
+public class Menu implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull(groups = {Update.class})
     private Long id;
 
-    /**
-     * 创建日期
-     */
-    private Date createTime;
-
-    /**
-     * 是否外链
-     */
-    private Boolean iFrame;
-
-    /**
-     * 菜单名称
-     */
+    @NotBlank
     private String name;
 
-    /**
-     * 组件
-     */
+    @Column(unique = true)
+    private Long sort;
+
+    @Column(name = "path")
+    private String path;
+
     private String component;
+
+    private String icon;
 
     /**
      * 上级菜单ID
      */
+    @Column(name = "pid",nullable = false)
     private Long pid;
 
     /**
-     * 排序
+     * 是否为外链 true/false
      */
-    private Long sort;
+    @Column(name = "i_frame")
+    private Boolean iFrame;
 
-    /**
-     * 图标
-     */
-    private String icon;
+    @ManyToMany(mappedBy = "menus")
+    @JsonIgnore
+    private Set<Role> roles;
 
-    /**
-     * 链接地址
-     */
-    private String path;
+    @CreationTimestamp
+    @Column(name = "create_time")
+    private Timestamp createTime;
 
-
+    public interface Update{}
 }

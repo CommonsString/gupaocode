@@ -1,110 +1,59 @@
 package com.module.system.domain;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
-public class Permission {
-    /**
-     * ID
-     */
-    private Long id;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.Set;
 
-    /**
-     * 别名
-     */
-    private String alias;
+@Entity
+@Getter
+@Setter
+@Table(name = "permission")
+public class Permission implements Serializable{
 
-    /**
-     * 创建日期
-     */
-    private Date createTime;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@NotNull(groups = {Update.class})
+	private Long id;
 
-    /**
-     * 名称
-     */
-    private String name;
+	@NotBlank
+	private String name;
 
-    /**
-     * 上级权限
-     */
-    private Integer pid;
+	/**
+	 * 上级类目
+	 */
+	@NotNull
+	@Column(name = "pid",nullable = false)
+	private Long pid;
 
-    /**
-     * ID
-     * @return id ID
-     */
-    public Long getId() {
-        return id;
-    }
+	@NotBlank
+	private String alias;
 
-    /**
-     * ID
-     * @param id ID
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@JsonIgnore
+	@ManyToMany(mappedBy = "permissions")
+	private Set<Role> roles;
 
-    /**
-     * 别名
-     * @return alias 别名
-     */
-    public String getAlias() {
-        return alias;
-    }
+	@CreationTimestamp
+	@Column(name = "create_time")
+	private Timestamp createTime;
 
-    /**
-     * 别名
-     * @param alias 别名
-     */
-    public void setAlias(String alias) {
-        this.alias = alias == null ? null : alias.trim();
-    }
+	@Override
+	public String toString() {
+		return "Permission{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", pid=" + pid +
+				", alias='" + alias + '\'' +
+				", createTime=" + createTime +
+				'}';
+	}
 
-    /**
-     * 创建日期
-     * @return create_time 创建日期
-     */
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    /**
-     * 创建日期
-     * @param createTime 创建日期
-     */
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    /**
-     * 名称
-     * @return name 名称
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * 名称
-     * @param name 名称
-     */
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
-    }
-
-    /**
-     * 上级权限
-     * @return pid 上级权限
-     */
-    public Integer getPid() {
-        return pid;
-    }
-
-    /**
-     * 上级权限
-     * @param pid 上级权限
-     */
-    public void setPid(Integer pid) {
-        this.pid = pid;
-    }
+	public interface Update{}
 }

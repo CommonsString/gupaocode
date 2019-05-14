@@ -2,56 +2,66 @@ package com.module.system.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Set;
 
-@Setter
+@Entity
 @Getter
-public class User {
-    /**
-     * ID
-     */
+@Setter
+@Table(name="user")
+public class User implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull(groups = Update.class)
     private Long id;
 
-    /**
-     * 头像地址
-     */
+    @NotBlank
+    private String username;
+
     private String avatar;
 
-    /**
-     * 创建日期
-     */
-    private Timestamp createTime;
-
-    /**
-     * 邮箱
-     */
+    @NotBlank
     @Pattern(regexp = "([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}",message = "格式错误")
     private String email;
 
-    /**
-     * 状态：1启用、0禁用
-     */
-    private Long enabled;
+    @NotNull
+    private Boolean enabled;
 
-    /**
-     * 密码
-     */
     private String password;
 
-    /**
-     * 用户名
-     */
-    private String username;
+    @CreationTimestamp
+    @Column(name = "create_time")
+    private Timestamp createTime;
 
-    /**
-     * 最后修改密码的日期
-     */
-    private Timestamp lastPasswordResetTime;
+    @Column(name = "last_password_reset_time")
+    private Date lastPasswordResetTime;
+
+    @ManyToMany
+    @JoinTable(name = "users_roles", joinColumns = {@JoinColumn(name = "user_id",referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "id")})
+    private Set<Role> roles;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", email='" + email + '\'' +
+                ", enabled=" + enabled +
+                ", password='" + password + '\'' +
+                ", createTime=" + createTime +
+                ", lastPasswordResetTime=" + lastPasswordResetTime +
+                '}';
+    }
 
     public @interface Update {}
-
 }
