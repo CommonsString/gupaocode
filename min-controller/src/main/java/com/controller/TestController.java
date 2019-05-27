@@ -10,11 +10,13 @@ import com.module.system.mapper.RoleMapper;
 import com.module.system.service.MenuService;
 import com.module.system.service.RoleService;
 import com.module.system.service.UserService;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -46,8 +48,11 @@ public class TestController {
 
     @GetMapping (value = "/getname")
     public Object getName () {
-//        return menuRepository.findByRoles_IdOrderBySortAsc(1L);
         return null;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new Date());
     }
 
 

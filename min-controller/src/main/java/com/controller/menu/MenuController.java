@@ -22,7 +22,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("menu")
-@Api(tags = {"菜单管理"})
+@Api(tags = {"菜单构建"})
 public class MenuController {
 
 
@@ -35,7 +35,7 @@ public class MenuController {
     @Autowired
     private RoleService roleService;
 
-    @GetMapping(value = "/build")
+    @GetMapping(value = "/buildsss")
     @ApiOperation("构建菜单, 返回前端菜单视图")
     public ResponseEntity buildViewMenu() {
         // 获取当前用户
@@ -49,6 +49,16 @@ public class MenuController {
         // 构建菜单
         return new ResponseEntity(menuService.buildMenu(menuTree), HttpStatus.OK);
     }
+
+    @GetMapping(value = "/build")
+    public ResponseEntity buildMenus(){
+        UserDetails userDetails = SecurityContextHandler.getUserDetails();
+        User user = userService.findByName(userDetails.getUsername());
+        List<MenuDTO> menuDTOList = menuService.findByRoles(roleService.findByUsers_Id(user.getId()));
+        List<MenuDTO> menuDTOTree = (List<MenuDTO>)menuService.buildTree(menuDTOList).get("content");
+        return new ResponseEntity(menuService.buildMenus(menuDTOTree),HttpStatus.OK);
+    }
+
 
 
 }
