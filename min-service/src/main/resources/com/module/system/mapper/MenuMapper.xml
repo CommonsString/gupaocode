@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.module.system.mapper.MenuMapper">
+  <resultMap id="BaseResultMap" type="com.module.system.domain.Menu">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="i_frame" jdbcType="BIT" property="iFrame" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="component" jdbcType="VARCHAR" property="component" />
+    <result column="pid" jdbcType="BIGINT" property="pid" />
+    <result column="sort" jdbcType="BIGINT" property="sort" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, create_time, i_frame, name, component, pid, sort, icon, path
+  </sql>
+
+  <select id="findByRoleIdRetuenMenuList" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"></include>
+    FROM
+    roles_menus AS rm
+    INNER JOIN menu AS mu
+    ON rm.menu_id = mu.id
+    WHERE
+    rm.role_id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="findByPid" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from menu
+    where pid = #{pid,jdbcType=BIGINT}
+  </select>
+
+
+  <!--自动生成-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from menu
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from menu
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.module.system.domain.Menu">
+    insert into menu (id, create_time, i_frame, 
+      name, component, pid, 
+      sort, icon, path)
+    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{iFrame,jdbcType=BIT}, 
+      #{name,jdbcType=VARCHAR}, #{component,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT}, 
+      #{sort,jdbcType=BIGINT}, #{icon,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.module.system.domain.Menu">
+    insert into menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="iFrame != null">
+        i_frame,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="component != null">
+        component,
+      </if>
+      <if test="pid != null">
+        pid,
+      </if>
+      <if test="sort != null">
+        sort,
+      </if>
+      <if test="icon != null">
+        icon,
+      </if>
+      <if test="path != null">
+        path,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="iFrame != null">
+        #{iFrame,jdbcType=BIT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="component != null">
+        #{component,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null">
+        #{pid,jdbcType=BIGINT},
+      </if>
+      <if test="sort != null">
+        #{sort,jdbcType=BIGINT},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        #{path,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.module.system.domain.Menu">
+    update menu
+    <set>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="iFrame != null">
+        i_frame = #{iFrame,jdbcType=BIT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="component != null">
+        component = #{component,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null">
+        pid = #{pid,jdbcType=BIGINT},
+      </if>
+      <if test="sort != null">
+        sort = #{sort,jdbcType=BIGINT},
+      </if>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        path = #{path,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.module.system.domain.Menu">
+    update menu
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      i_frame = #{iFrame,jdbcType=BIT},
+      name = #{name,jdbcType=VARCHAR},
+      component = #{component,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=BIGINT},
+      sort = #{sort,jdbcType=BIGINT},
+      icon = #{icon,jdbcType=VARCHAR},
+      path = #{path,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

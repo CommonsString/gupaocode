@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.module.system.mapper.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.module.system.domain.Role">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, create_time, name, remark
+  </sql>
+  <!--start:角色-persmiss-menu-->
+  <select id="findByUserMenuAndRole" parameterType="java.lang.Long" resultMap="menu_role_permission">
+      SELECT
+      r.id,
+      r.name,
+      r.remark,
+      per.id,
+      per.name,
+      per.pid,
+      per.alias,
+      per.create_time,
+
+      men.id AS menuId,
+      men.name AS menuName,
+      men.sort AS menuSort,
+      men.path AS menuPath,
+      men.component AS menuComponent,
+      men.icon AS menuIcon,
+      men.pid AS menuPid,
+      men.create_time AS menuCreateTime,
+      men.i_frame AS menuIframe
+      FROM
+      role AS r
+      INNER JOIN roles_permissions AS rp on r.id = rp.role_id
+      INNER JOIN roles_menus AS rm on r.id = rm.role_id
+      INNER JOIN permission AS per on rp.permission_id = per.id
+      INNER JOIN menu AS men on rm.menu_id = men.id
+      WHERE r.id = #{id,jdbcType=BIGINT}
+  </select>
+  <resultMap id="menu_role_permission" type="com.module.system.domain.Role">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <!--permission-->
+    <collection property="permissions" ofType="com.module.system.domain.Permission">
+      <id column="id" jdbcType="BIGINT" property="id" />
+      <result column="alias" jdbcType="VARCHAR" property="alias" />
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="pid" jdbcType="INTEGER" property="pid" />
+    </collection>
+    <!--menus-->
+    <collection property="menus" ofType="com.module.system.domain.Menu">
+      <id column="menuId" jdbcType="BIGINT" property="id" />
+      <result column="menuCreateTime" jdbcType="TIMESTAMP" property="createTime" />
+      <result column="menuIframe" jdbcType="BIT" property="iFrame" />
+      <result column="menuName" jdbcType="VARCHAR" property="name" />
+      <result column="menuComponent" jdbcType="VARCHAR" property="component" />
+      <result column="menuPid" jdbcType="BIGINT" property="pid" />
+      <result column="menuSort" jdbcType="BIGINT" property="sort" />
+      <result column="menuIcon" jdbcType="VARCHAR" property="icon" />
+      <result column="menuPath" jdbcType="VARCHAR" property="path" />
+    </collection>
+  </resultMap>
+  <!--end:角色-persmiss-menu-->
+
+
+
+
+  <select id="selectUserRole_id" parameterType="java.lang.Long" resultType="com.module.system.domain.Role">
+    select
+    role_id AS id
+    from users_roles
+    where user_id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <!--返回list-->
+  <select id="findByIdReturnList" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from role
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="findRoleAll" resultMap="BaseResultMap">
+    select
+    *
+    from role
+  </select>
+
+  <!--根据名称查找-->
+  <select id="selectByName" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from role
+    where name = #{name,jdbcType=VARCHAR}
+  </select>
+
+
+  <!--自动生成-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from role
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from role
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.module.system.domain.Role">
+    insert into role (id, create_time, name, 
+      remark)
+    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{name,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.module.system.domain.Role">
+    <!--插入后返回主键-->
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">-->
+      select LAST_INSERT_ID()
+    </selectKey>
+    insert into role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.module.system.domain.Role">
+    update role
+    <set>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.module.system.domain.Role">
+    update role
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      name = #{name,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

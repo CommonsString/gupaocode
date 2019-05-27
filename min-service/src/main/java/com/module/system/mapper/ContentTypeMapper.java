@@ -42,4 +42,10 @@ public interface ContentTypeMapper {
     int updateByPrimaryKey(ContentType record);
 
     List<ContentType> selectAll();
+
+    ContentType findByName(String name);
+
+    List<ContentType> findByNameLike(String name);
+
+    Long countType();
 }

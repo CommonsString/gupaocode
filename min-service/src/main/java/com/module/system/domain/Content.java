@@ -33,7 +33,7 @@ public class Content {
     /**
      * 阅读权限
      */
-    private String permission;
+    private Long permission;
 
     /**
      * 是否审阅
@@ -45,6 +45,12 @@ public class Content {
      */
     private String context;
 
-    private Long type;
+    private Long typeId;
+
+    private String type;
+
+
+    // 冗余属性, 阅读权限
+    private String readName;
 
 }

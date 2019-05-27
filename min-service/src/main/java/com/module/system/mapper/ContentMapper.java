@@ -1,7 +1,10 @@
 package com.module.system.mapper;
 
 import com.module.system.domain.Content;
+import com.module.system.entity.vo.ContentVo;
+import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ContentMapper {
@@ -50,4 +53,16 @@ public interface ContentMapper {
     List<Content> findByIsRightDesc();
 
     void updateIsRightStatus(Long id);
+
+    List<Content> findByIsRightMsg(Content content);
+
+    List<Content> findAll();
+
+    Long countIsRight();
+
+    Long countNotIsRight();
+
+    Content findByTitle(String name);
+
+    Long countMsgNow(Date createTime);
 }

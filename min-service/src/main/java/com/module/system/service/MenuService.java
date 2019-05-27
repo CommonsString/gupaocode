@@ -1,5 +1,6 @@
 package com.module.system.service;
 
+import com.module.system.domain.Menu;
 import com.module.system.domain.Role;
 import com.module.system.dto.MenuDTO;
 //import com.module.system.entity.Role;
@@ -31,4 +32,12 @@ public interface MenuService {
      * @return
      */
     Object buildMenu(List<MenuDTO> menuTree);
+
+    List<Menu> findByPid(long pid);
+
+    Object getMenuTree(List<Menu> menus);
+
+    List<MenuDTO> findByRoles(Set<Role> byUsers_id);
+
+    Object buildMenus(List<MenuDTO> menuDTOTree);
 }

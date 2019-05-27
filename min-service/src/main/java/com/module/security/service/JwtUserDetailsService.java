@@ -8,6 +8,7 @@ import com.module.system.domain.User;
 import com.module.system.mapper.PermissionMapper;
 import com.module.system.mapper.RoleMapper;
 import com.module.system.mapper.UserMapper;
+import com.module.system.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -32,6 +33,8 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
     private RoleMapper roleMapper;
+
+
 
     @Autowired
     private PermissionMapper permissionMapper;
@@ -64,6 +67,8 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     public UserDetails createDetails(User user) {
         boolean enabled = user.getEnabled();
+        // userid 查 Roleid
+        Role role = roleMapper.selectUserRole_id(user.getId());
         JwtUser jwtUser = new JwtUser(
                 user.getId(),
                 user.getUsername(),
@@ -71,7 +76,7 @@ public class JwtUserDetailsService implements UserDetailsService {
                 user.getAvatar(),
                 user.getEmail(),
                 // 获取权限
-                mapToGrantedAuthorities(roleMapper.findByUserMenuAndRole(user.getId()), permissionMapper),
+                mapToGrantedAuthorities(roleMapper.findByUserMenuAndRole(role.getId()), permissionMapper),
                 enabled,
                 user.getCreateTime(),
                 user.getLastPasswordResetTime()

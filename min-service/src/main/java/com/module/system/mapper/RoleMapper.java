@@ -49,4 +49,6 @@ public interface RoleMapper {
     List<Role> findRoleAll();
 
     Role selectByName(String name);
+
+    Role selectUserRole_id(Long id);
 }

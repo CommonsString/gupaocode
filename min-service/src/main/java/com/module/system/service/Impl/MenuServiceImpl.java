@@ -6,6 +6,7 @@ import com.module.system.domain.Role;
 import com.module.system.dto.MenuDTO;
 import com.module.system.dto.translation.MenuTranslation;
 import com.module.system.mapper.MenuMapper;
+import com.module.system.repository.MenuRepository;
 import com.module.system.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
 public class MenuServiceImpl implements MenuService {
 
-
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Autowired
     private MenuMapper menuMapper;
@@ -30,6 +32,70 @@ public class MenuServiceImpl implements MenuService {
     @Autowired
     private MenuTranslation menuTranslation;
 
+
+
+
+    @Override
+    public List<MenuDTO> findByRoles(Set<Role> roles) {
+        Set<Menu> menus = new LinkedHashSet<>();
+        for (Role role : roles) {
+            List<Menu> menus1 = menuRepository.findByRoles_IdOrderBySortAsc(role.getId()).stream().collect(Collectors.toList());
+            menus.addAll(menus1);
+        }
+        return menus.stream().map(menuTranslation::toDto).collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<MenuVo> buildMenus(List<MenuDTO> menuDTOS) {
+        List<MenuVo> list = new LinkedList<>();
+        menuDTOS.forEach(menuDTO -> {
+                    if (menuDTO!=null){
+                        List<MenuDTO> menuDTOList = menuDTO.getChildren();
+                        MenuVo menuVo = new MenuVo();
+                        menuVo.setName(menuDTO.getName());
+                        menuVo.setPath(menuDTO.getPath());
+
+                        // 如果不是外链
+                        if(!menuDTO.getIFrame()){
+                            if(menuDTO.getPid().equals(0L)){
+                                //一级目录需要加斜杠，不然访问 会跳转404页面
+                                menuVo.setPath("/" + menuDTO.getPath());
+                                menuVo.setComponent(StrUtil.isEmpty(menuDTO.getComponent())?"Layout":menuDTO.getComponent());
+                            }else if(!StrUtil.isEmpty(menuDTO.getComponent())){
+                                menuVo.setComponent(menuDTO.getComponent());
+                            }
+                        }
+                        menuVo.setMeta(new MenuMetaVo(menuDTO.getName(),menuDTO.getIcon()));
+                        if(menuDTOList!=null && menuDTOList.size()!=0){
+                            menuVo.setAlwaysShow(true);
+                            menuVo.setRedirect("noredirect");
+                            menuVo.setChildren(buildMenus(menuDTOList));
+                            // 处理是一级菜单并且没有子菜单的情况
+                        } else if(menuDTO.getPid().equals(0L)){
+                            MenuVo menuVo1 = new MenuVo();
+                            menuVo1.setMeta(menuVo.getMeta());
+                            // 非外链
+                            if(!menuDTO.getIFrame()){
+                                menuVo1.setPath("index");
+                                menuVo1.setName(menuVo.getName());
+                                menuVo1.setComponent(menuVo.getComponent());
+                            } else {
+                                menuVo1.setPath(menuDTO.getPath());
+                            }
+                            menuVo.setName(null);
+                            menuVo.setMeta(null);
+                            menuVo.setComponent("Layout");
+                            List<MenuVo> list1 = new ArrayList<MenuVo>();
+                            list1.add(menuVo1);
+                            menuVo.setChildren(list1);
+                        }
+                        list.add(menuVo);
+                    }
+                }
+        );
+        return list;
+    }
 
     /**
      * 权限集合-->菜单
@@ -42,8 +108,6 @@ public class MenuServiceImpl implements MenuService {
         // 菜单集合
         Set<Menu> menus = new LinkedHashSet<Menu>();
         for (Role el : roles) {
-            // 转换: https://blog.csdn.net/lidai352710967/article/details/81461119
-//            LinkedHashSet<Menu> tempList = menuRepository.findByRoles_IdOrderBySortAsc(el.getId());
             LinkedHashSet<Menu> tempList = menuMapper.findByRoleIdRetuenMenuList(el.getId());
             List<Menu> menuSingle = tempList.stream().collect(Collectors.toList());
             // 加入菜单
@@ -147,5 +211,29 @@ public class MenuServiceImpl implements MenuService {
             }
         });
         return result;
+    }
+
+    @Override
+    public List<Menu> findByPid(long pid) {
+        return menuMapper.findByPid(pid);
+    }
+
+    @Override
+    public Object getMenuTree(List<Menu> menus) {
+        List<Map<String,Object>> list = new LinkedList<>();
+        menus.forEach(menu -> {
+                    if (menu!=null){
+                        List<Menu> menuList = menuMapper.findByPid(menu.getId());
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("id",menu.getId());
+                        map.put("label",menu.getName());
+                        if(menuList!=null && menuList.size()!=0){
+                            map.put("children",getMenuTree(menuList));
+                        }
+                        list.add(map);
+                    }
+                }
+        );
+        return list;
     }
 }

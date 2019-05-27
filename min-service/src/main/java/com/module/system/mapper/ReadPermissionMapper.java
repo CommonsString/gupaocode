@@ -42,4 +42,8 @@ public interface ReadPermissionMapper {
     int updateByPrimaryKey(ReadPermission record);
 
     List<ReadPermission> selectAll();
+
+    List<ReadPermission> findByNameLike(String name);
+
+    ReadPermission findByName(String name);
 }

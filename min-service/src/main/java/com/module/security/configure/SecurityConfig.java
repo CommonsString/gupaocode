@@ -103,7 +103,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/druid/**").anonymous()
                 // 新闻测试
                 .antMatchers("/test/getname").anonymous()
-                .antMatchers("/content/upMsgFile").anonymous()
+
                 // swagger start
                 .antMatchers("/swagger-ui.html").anonymous()
                 .antMatchers("/swagger-resources/**").anonymous()
@@ -111,6 +111,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/*/api-docs").anonymous()
                 // swagger end
 
+                .antMatchers("/content/delMsg").anonymous()
                 // 接口限流测试
                 .antMatchers("/test/**").anonymous()
                 .antMatchers(HttpMethod.OPTIONS, "/**").anonymous()

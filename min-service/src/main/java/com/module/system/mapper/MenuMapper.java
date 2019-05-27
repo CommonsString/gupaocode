@@ -3,6 +3,7 @@ package com.module.system.mapper;
 import com.module.system.domain.Menu;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 
 public interface MenuMapper {
     /**
@@ -42,4 +43,6 @@ public interface MenuMapper {
     int updateByPrimaryKey(Menu record);
 
     LinkedHashSet<Menu> findByRoleIdRetuenMenuList(Long id);
+
+    List<Menu> findByPid(long pid);
 }

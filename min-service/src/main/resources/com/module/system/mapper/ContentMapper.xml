@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.module.system.mapper.ContentMapper">
+  <resultMap id="BaseResultMap" type="com.module.system.domain.Content">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="file_id" jdbcType="BIGINT" property="fileId" />
+    <result column="permission" jdbcType="BIGINT" property="permission" />
+    <result column="is_right" jdbcType="VARCHAR" property="isRight" />
+    <result column="type_id" jdbcType="BIGINT" property="type" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.module.system.domain.Content">
+    <result column="context" jdbcType="LONGVARCHAR" property="context" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, title, create_time, file_id, permission, is_right, type_id
+  </sql>
+  <sql id="Blob_Column_List">
+    context
+  </sql>
+
+  <!--
+      SELECT id, title, permission, is_right, context
+    FROM msg_content WHERE is_right = '0'
+    ORDER BY create_time DESC
+    limit 10
+
+  -->
+  <!--返回最新10条数据-->
+  <select id="findByIsRightDesc" resultType="com.module.system.domain.Content">
+    SELECT
+    ms.id,
+    ms.title,
+    ms.permission,
+    ms.is_right AS isRight,
+    ms.context,
+    rp.name AS readName,
+    ty.name AS type
+    FROM msg_content AS ms
+    INNER JOIN msg_content_type AS ty ON ms.type_id = ty.id
+    INNER JOIN read_permission AS rp ON ms.permission = rp.id
+    WHERE is_right = '0'
+    ORDER BY create_time DESC
+    limit 10
+  </select>
+
+
+  <!--    SELECT
+    ms.id,
+    ms.title,
+    ms.permission,
+    ms.is_right AS isRight,
+    ms.context,
+    ty.name AS type
+    FROM msg_content AS ms INNER JOIN msg_content_type AS ty
+    ON ms.type_id = ty.id
+    WHERE is_right = #{isRight,jdbcType=CHAR}-->
+  <select id="findByIsRightMsg" parameterType="com.module.system.domain.Content" resultType="com.module.system.domain.Content">
+    SELECT
+    ms.id,
+    ms.title,
+    ms.permission,
+    ms.is_right AS isRight,
+    ms.context,
+    rp.name AS readName,
+    ty.name AS type
+    FROM msg_content AS ms
+    INNER JOIN msg_content_type AS ty ON ms.type_id = ty.id
+    INNER JOIN read_permission AS rp ON ms.permission = rp.id
+    <if test="isRight != ''">
+      WHERE is_right = #{isRight,jdbcType=CHAR}
+    </if>
+    <if test="title != ''">
+      AND title Like "%"#{title,jdbcType=VARCHAR}"%"
+    </if>
+    ORDER BY create_time DESC
+  </select>
+
+  <select id="findAll"  resultType="com.module.system.domain.Content">
+    SELECT
+    ms.id,
+    ms.title,
+    ms.permission,
+    ms.is_right AS isRight,
+    ms.context,
+    rp.name AS readName,
+    ty.name AS type
+    FROM msg_content AS ms
+    INNER JOIN msg_content_type AS ty ON ms.type_id = ty.id
+    INNER JOIN read_permission AS rp ON ms.permission = rp.id
+    ORDER BY is_right DESC
+  </select>
+
+
+
+  <select id="countIsRight" resultType="java.lang.Long">
+    select count(id) AS isRight
+    from msg_content
+    where is_right = '1'
+  </select>
+
+  <select id="countNotIsRight" resultType="java.lang.Long">
+    select count(id) AS NotIsRight
+    from msg_content
+    where is_right = '0'
+  </select>
+
+  <!--标题查重-->
+  <select id="findByTitle" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select title
+    from msg_content
+    where title = #{title,jdbcType=VARCHAR}
+  </select>
+
+
+  <select id="countMsgNow" parameterType="java.util.Date" resultType="java.lang.Long">
+    select count(id) AS newGet
+    from msg_content
+    where create_time = #{createTime,jdbcType=TIMESTAMP}
+  </select>
+
+  <!--自动生成-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from msg_content
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from msg_content
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.module.system.domain.Content">
+    insert into msg_content (id, title, create_time, 
+      file_id, permission, is_right, 
+      context)
+    values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{fileId,jdbcType=BIGINT}, #{permission,jdbcType=VARCHAR}, #{isRight,jdbcType=CHAR}, 
+      #{context,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.module.system.domain.Content">
+    insert into msg_content
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="fileId != null">
+        file_id,
+      </if>
+      <if test="permission != null">
+        permission,
+      </if>
+      <if test="isRight != null">
+        is_right,
+      </if>
+      <if test="context != null">
+        context,
+      </if>
+      <if test="typeId != null">
+        type_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fileId != null">
+        #{fileId,jdbcType=BIGINT},
+      </if>
+      <if test="permission != null">
+        #{permission,jdbcType=VARCHAR},
+      </if>
+      <if test="isRight != null">
+        #{isRight,jdbcType=CHAR},
+      </if>
+      <if test="context != null">
+        #{context,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="typeId != null">
+        #{typeId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.module.system.domain.Content">
+    update msg_content
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fileId != null">
+        file_id = #{fileId,jdbcType=BIGINT},
+      </if>
+      <if test="permission != null">
+        permission = #{permission,jdbcType=VARCHAR},
+      </if>
+      <if test="isRight != null">
+        is_right = #{isRight,jdbcType=CHAR},
+      </if>
+      <if test="context != null">
+        context = #{context,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="typeId != null">
+        type_id = #{typeId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.module.system.domain.Content">
+    update msg_content
+    set title = #{title,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      file_id = #{fileId,jdbcType=BIGINT},
+      permission = #{permission,jdbcType=VARCHAR},
+      is_right = #{isRight,jdbcType=CHAR},
+      context = #{context,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.module.system.domain.Content">
+    update msg_content
+    set title = #{title,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      file_id = #{fileId,jdbcType=BIGINT},
+      permission = #{permission,jdbcType=VARCHAR},
+      is_right = #{isRight,jdbcType=CHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
