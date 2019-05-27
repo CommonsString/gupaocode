@@ -38,4 +38,5 @@ public interface EntityMapper<D, E> {
      * @return
      */
     List <D> toDto(List<E> entityList);
+
 }
